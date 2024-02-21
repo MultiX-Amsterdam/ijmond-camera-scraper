@@ -18,7 +18,7 @@ camera_name : str
 Examples
 ----------
 Command-line usage example:
-    $ python scraper.py kooks_fabriek_1 http://username:password@root:port/image.jpg
+    $ python scraper.py http://username:password@root:port/image.jpg kooks_fabriek_1
 
 Warnings
 ----------
