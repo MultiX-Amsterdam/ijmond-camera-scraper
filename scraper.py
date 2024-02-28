@@ -32,9 +32,23 @@ import time
 import os
 from datetime import datetime
 import argparse
+from requests.auth import HTTPDigestAuth
+from urllib.parse import urlparse
 
 
-def download_image(url, path):
+def get_credentials(url):
+    """
+    Extract the credentials from a URL.
+
+    Parameters
+    ----------
+    url : str
+        URL of the image to download.
+    """
+    parsed_url = urlparse(url)
+    return parsed_url.username, parsed_url.password
+
+def download_image(url, path, username, password):
     """
     Download an image from a URL and save it to a specified path.
 
@@ -44,10 +58,16 @@ def download_image(url, path):
         URL of the image to download.
     path : str
         The directory path to store the image.
+    username : str
+        The username extracted from the URL.
+    password : str
+        The password extracted from the URL.
     """
     try:
-        response = requests.get(url)
-        response.raise_for_status()  # Check if the request was successful
+        if username and password: # Check whether we need credentials to access the URL
+            response = requests.get(url, timeout=30, verify=False, auth=HTTPDigestAuth(username, password))
+        else:
+            response = requests.get(url, timeout=30, verify=False)
         with open(path, 'wb') as f:
             f.write(response.content)
         print(f"Image downloaded and saved to {path}")
@@ -69,8 +89,11 @@ def main(url, camera_name):
         # Generate the full path for the new image file
         file_path = os.path.join(directory_path, f"{timestamp}.jpg")
 
+        # Get the username and password from secure URL
+        username, password = get_credentials(url)
+
         # Download the image
-        download_image(url, file_path)
+        download_image(url, file_path, username, password)
 
         # Wait for 5 seconds before downloading the next image
         time.sleep(5)
