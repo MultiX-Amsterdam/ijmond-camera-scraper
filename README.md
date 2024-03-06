@@ -37,3 +37,62 @@ When contributing code to this repository, please follow the guidelines below:
   - For JavaScript files, use the lower_snake_case naming convention. Avoid using uppercases.
 - Always comment the code, which helps others read the code and reduce our pain in the future when debugging or adding new features.
 - Write testing cases to make sure that functions work as expected.
+
+# <a name="install-conda"></a>Dockerize the code 
+
+### Setup the Docker engine (administrator only)
+> WARNING: this section is only for system administrators, not developers.
+
+This assumes that Ubuntu is installed.
+A detailed documentation is [here](https://docs.docker.com/engine/install/ubuntu/).
+Before you install Docker Engine for the first time on a new host machine, you need to set up the Docker repository. Afterward, you can install and update Docker from the repository.
+1. Set up Docker's apt repository:
+```sh
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+```
+2. Install the Docker packages:
+```sh
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+3. Verify that the Docker Engine installation is successful by running the hello-world image. This command downloads a test image and runs it in a container. When the container runs, it prints a confirmation message and exits.
+```sh
+sudo docker run hello-world
+```
+
+### Create Docker image and run it
+1. Create the Dockerfile, where you need to specify the working directory, the python version and install the required libraries:
+```sh
+FROM python:alpine3.17
+WORKDIR /app
+COPY . /app
+RUN pip install -r requirements.txt
+ENTRYPOINT ["python", "scraper.py"]
+```
+
+2. This is the Docker command used to build the Docker image. It reads the instructions from a Dockerfile and generates a Docker image based on those instructions. Tha name of the image is scraper.
+```sh
+sudo docker build scraper .
+```
+
+3. Run the Docker image by specifying the camera_name and the url of the camera. The -d options means that the container runs in the background and doesn't keep the terminal tied up. The --restart unless-stopped option specifies the container's restart policy. In this case, it instructs Docker to restart the container automatically unless it is explicitly stopped by the user. This ensures that the container is always running, even if it crashes or the Docker daemon restarts.
+```sh
+sudo docker run -d --restart unless-stopped -v "$(pwd)/camera_name:/app/camera_name" scraper 'http://username:password@root:port/image.jpg' camera_name
+```
+
+4. If the user wants to stop the container:
+```sh
+sudo docker stop CONTAINERID
+sudo docker rm CONTAINERID
+```
