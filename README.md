@@ -83,12 +83,12 @@ ENTRYPOINT ["python", "scraper.py"]
 
 2. This is the Docker command used to build the Docker image. It reads the instructions from a Dockerfile and generates a Docker image based on those instructions. Tha name of the image is scraper.
 ```sh
-sudo docker build scraper .
+sudo docker build -t scraper:0.0.0 .
 ```
 
 3. Run the Docker image by specifying the camera_name and the url of the camera. The -d options means that the container runs in the background and doesn't keep the terminal tied up. The --restart unless-stopped option specifies the container's restart policy. In this case, it instructs Docker to restart the container automatically unless it is explicitly stopped by the user. This ensures that the container is always running, even if it crashes or the Docker daemon restarts.
 ```sh
-sudo docker run -d --restart unless-stopped -v "$(pwd)/camera_name:/app/camera_name" scraper 'http://username:password@root:port/image.jpg' camera_name
+sudo docker run -d --restart unless-stopped -v "$(pwd)/camera_name:/app/camera_name" scraper:0.0.0 'http://username:password@root:port/image.jpg' camera_name
 ```
 
 4. If the user wants to stop the container:

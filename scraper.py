@@ -34,6 +34,7 @@ from datetime import datetime
 import argparse
 from requests.auth import HTTPDigestAuth
 from urllib.parse import urlparse
+import pytz
 
 
 def get_credentials(url):
@@ -78,9 +79,16 @@ def download_image(url, path, username, password):
 def main(url, camera_name):
     while True:
         # Get the current date and time
-        now = datetime.now()
-        date_str = now.strftime("%Y-%m-%d")
-        timestamp = int(now.timestamp())
+        # now = datetime.now()
+        # date_str = now.strftime("%Y-%m-%d")
+        # timestamp = int(now.timestamp())
+
+        now_utc = datetime.now()
+        cet_timezone = pytz.timezone('Europe/Amsterdam')
+        now_cet = now_utc.astimezone(cet_timezone)
+        date_str = now_cet.strftime("%Y-%m-%d")
+        # time_str = now_cet.strftime("%H:%M:%S")
+        timestamp = int(now_cet.timestamp())
 
         # Create the directory structure if it does not exist
         directory_path = os.path.join(camera_name, date_str)

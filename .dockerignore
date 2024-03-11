@@ -1,0 +1,11 @@
+*.pyc
+*~
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.db
+*key
+*.log
+kooks_fabriek_1/
+kooks_fabriek_2/
