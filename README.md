@@ -70,6 +70,10 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 ```sh
 sudo docker run hello-world
 ```
+4. After that, you can use the following command to list the docker images that are currently running:
+```sh
+sudo docker ps -a
+```
 
 ### Create Docker image and run it
 1. Create the Dockerfile, where you need to specify the working directory, the python version and install the required libraries:
@@ -91,7 +95,7 @@ sudo docker build -t scraper:0.0.0 .
 sudo docker run -d --restart unless-stopped -v "$(pwd)/camera_name:/app/camera_name" scraper:0.0.0 'http://username:password@root:port/image.jpg' camera_name
 ```
 
-4. If the user wants to stop the container:
+4. If the user wants to stop or remove the container:
 ```sh
 sudo docker stop CONTAINERID
 sudo docker rm CONTAINERID
